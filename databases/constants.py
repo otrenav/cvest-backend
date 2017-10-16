@@ -1,6 +1,7 @@
 
 USERS = "users"
 PERSONAL = "personal"
-
-EXCHANGES = "exchanges"
+WALLETS = "wallets"
+ACCOUNTS = "accounts"
 ASSETS = "assets"
+EXCHANGES = "exchanges"
