@@ -1,0 +1,37 @@
+{
+  "success": true,
+  "message": "",
+  "result": [
+    {
+      "PrevDay": 0.06859479,
+      "High": 0.06884712,
+      "Last": 0.06817999,
+      "Bid": 0.067805,
+      "OpenSellOrders": 15683,
+      "TimeStamp": "2017-10-03T00:34:13.95",
+      "Created": "2015-08-14T09:02:24.817",
+      "MarketName": "BTC-ETH",
+      "Volume": 46651.20718726,
+      "BaseVolume": 3161.85759924,
+      "Low": 0.06700001,
+      "Ask": 0.06781,
+      "OpenBuyOrders": 3725
+    },
+    {
+      "PrevDay": 0.06859479,
+      "High": 0.06884712,
+      "Last": 0.06817999,
+      "Bid": 0.067805,
+      "OpenSellOrders": 15683,
+      "TimeStamp": "2017-10-03T00:34:13.95",
+      "Created": "2015-08-14T09:02:24.817",
+      "MarketName": "BTC-LTC",
+      "Volume": 46651.20718726,
+      "BaseVolume": 3161.85759924,
+      "Low": 0.06700001,
+      "Ask": 0.06781,
+      "OpenBuyOrders": 3725
+    },
+    ...
+  ]
+}
