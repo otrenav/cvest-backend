@@ -1,6 +1,6 @@
 
 from assets import Asset
-from utilities.exceptions import CVESTExternalError
+from utilities.exceptions import ExternalError
 
 from .wallet_requester import WalletRequester
 
@@ -25,7 +25,7 @@ class ARKWalletRequester(WalletRequester):
         except KeyError as error:
             msg = "ARK response could not be parsed"
             data = {"Original error": error, "Response": resp}
-            raise CVESTExternalError(msg, data)
+            raise ExternalError(msg, data)
         assets = []
         if success:
             try:
@@ -33,7 +33,7 @@ class ARKWalletRequester(WalletRequester):
             except KeyError as error:
                 msg = "ARK response could not be parsed"
                 data = {"Original error": error, "Response": resp}
-                raise CVESTExternalError(msg, data)
+                raise ExternalError(msg, data)
             if total > 0:
                 assets.append(Asset({
                     "name": "Ark",
@@ -50,7 +50,7 @@ class ARKWalletRequester(WalletRequester):
             # `raise`it, so it won't interrupt the program's flow.
             msg = "ARK response indicates failure"
             data = {"Response": resp}
-            CVESTExternalError(msg, data)
+            ExternalError(msg, data)
         return assets
 
     def _fix_decimals(self, number_str):

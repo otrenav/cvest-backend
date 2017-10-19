@@ -33,7 +33,7 @@ def collect():
 def main():
     print("[+] COLLECTING EXCHANGES DATA...")
     scheduler = Scheduler().get_scheduler()
-    scheduler.add_job(collect, "cron", minute="*/5")
+    scheduler.add_job(collect, "cron", hour="*")
     # scheduler.add_job(collect, "cron", minute="*/1")
     scheduler.start()
 

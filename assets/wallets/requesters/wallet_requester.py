@@ -1,7 +1,7 @@
 
 import requests
 
-from utilities.exceptions import CVESTInternalError
+from utilities.exceptions import InternalError
 
 from abc import ABCMeta, abstractmethod
 from pprint import pprint
@@ -24,7 +24,7 @@ class WalletRequester(metaclass=ABCMeta):
         except ValueError as error:
             data = {"URL": url}
             msg = "Could not parse JSON response"
-            raise CVESTInternalException(msg, data)
+            raise InternalError(msg, data)
         return data
 
     @abstractmethod

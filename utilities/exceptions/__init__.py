@@ -1,3 +1,3 @@
 
-from .cvest_internal_error import CVESTInternalError
-from .cvest_external_error import CVESTExternalError
+from .internal_error import InternalError
+from .external_error import ExternalError

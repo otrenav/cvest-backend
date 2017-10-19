@@ -23,17 +23,49 @@ def assets_time_series():
     return jsonify(resp)
 
 
-@app.route('/assets/current-status', methods=['GET'])
-def assets_current_status():
-    user_id = request.args['user_id']
-    resp = {'success': True, 'message': ''}
-    resp['data'] = User(db=DB, user_id=user_id).assets_current_status()
-    return jsonify(resp)
+# @app.route('/assets/time-series/aggregated', methods=['GET'])
+# def assets_time_series():
+#     user_id = request.args['user_id']
+#     resp = {'success': True, 'message': ''}
+#     resp['data'] = User(db=DB, user_id=user_id).assets_time_series()
+#     return jsonify(resp)
 
 
-@app.route('/assets/balances', methods=['GET'])
-def assets_balances():
-    user_id = request.args['user_id']
-    resp = {'success': True, 'message': ''}
-    resp['data'] = User(db=DB, user_id=user_id).assets_balances()
-    return jsonify(resp)
+# @app.route('/assets/time-series/aggregated/last', methods=['GET'])
+# def assets_time_series():
+#     user_id = request.args['user_id']
+#     resp = {'success': True, 'message': ''}
+#     resp['data'] = User(db=DB, user_id=user_id).assets_time_series()
+#     return jsonify(resp)
+
+
+# @app.route('/assets/time-series/disaggregated', methods=['GET'])
+# def assets_time_series():
+#     user_id = request.args['user_id']
+#     resp = {'success': True, 'message': ''}
+#     resp['data'] = User(db=DB, user_id=user_id).assets_time_series()
+#     return jsonify(resp)
+
+
+# @app.route('/assets/time-series/disaggregated/last', methods=['GET'])
+# def assets_time_series():
+#     user_id = request.args['user_id']
+#     resp = {'success': True, 'message': ''}
+#     resp['data'] = User(db=DB, user_id=user_id).assets_time_series()
+#     return jsonify(resp)
+
+
+# @app.route('/assets/overview', methods=['GET'])
+# def assets_current_status():
+#     user_id = request.args['user_id']
+#     resp = {'success': True, 'message': ''}
+#     resp['data'] = User(db=DB, user_id=user_id).assets_current_status()
+#     return jsonify(resp)
+
+
+# @app.route('/assets/balances', methods=['GET'])
+# def assets_balances():
+#     user_id = request.args['user_id']
+#     resp = {'success': True, 'message': ''}
+#     resp['data'] = User(db=DB, user_id=user_id).assets_balances()
+#     return jsonify(resp)

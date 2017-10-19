@@ -2,7 +2,7 @@
 import requests
 
 from assets import Asset
-from utilities.exceptions import CVESTExternalError
+from utilities.exceptions import ExternalError
 
 from .wallet_requester import WalletRequester
 
@@ -40,7 +40,7 @@ class IOTAWalletRequester(WalletRequester):
             # TODO: This is not a `KeyError`. What is it?
             msg = "IOTA's JSON response could not be parsed"
             data = {"Original error": error, "URL": self.URL, "Data": data}
-            raise CVESTExternalError(msg, data)
+            raise ExternalError(msg, data)
         return resp
 
     def _assets(self, resp):
@@ -49,13 +49,16 @@ class IOTAWalletRequester(WalletRequester):
         except KeyError as error:
             msg = "IOTA response could not be parsed"
             data = {"Original error": error, "Response": resp}
-            raise CVESTExternalError(msg, data)
+            raise ExternalError(msg, data)
         assets = []
         if total > 0:
             assets.append(Asset({
                 "name": "IOTA",
-                "symbol": "IOTA",
+                "symbol": "MIOTA",
                 "location": "Wallet",
-                "total": total
+                # NOTE: We follow CoinMarketCap's convention of using MIOTA
+                #       as the base unit, which is equivalent to 1,000,000
+                #       IOTAs. This is to simplify price calculations.
+                "total": total / 1000000
             }))
         return assets

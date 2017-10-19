@@ -1,5 +1,5 @@
 
-from utilities.exceptions import CVESTExternalError
+from utilities.exceptions import ExternalError
 
 from assets.wallets import Wallet
 from assets.accounts import Account
@@ -28,23 +28,17 @@ class User:
         for wallet in self._wallets():
             try:
                 assets += wallet.update_assets(timestamp, self.db)
-            except CVESTExternalError:
+            except ExternalError:
                 pass
         for account in self._accounts():
             try:
                 assets += account.update_assets(timestamp, self.db)
-            except CVESTExternalError:
+            except ExternalError:
                 pass
         return assets
 
     def assets_time_series(self):
         return self.db.read_user_assets_time_series(self.user_id)
-
-    def assets_current_status(self):
-        return self.db.read_user_assets_current_status(self.user_id)
-
-    def assets_balances(self):
-        return self.db.read_user_assets_balances(self.user_id)
 
     def new_wallet(self, symbol, address, note=""):
         self.db.write_wallet(self.user_id, symbol, address, note)

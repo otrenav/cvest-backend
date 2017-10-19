@@ -1,5 +1,5 @@
 
-from utilities.exceptions import CVESTInternalError
+from utilities.exceptions import InternalError
 
 from .bittrex_requester import BittrexRequester
 from .coinmarketcap_requester import CoinMarketCapRequester
@@ -13,4 +13,4 @@ def factory(name, key, secret):
     else:
         msg = "Unknown requester name"
         data = {"Name": name, "Key": key}
-        raise CVESTInternalError(msg, data)
+        raise InternalError(msg, data)

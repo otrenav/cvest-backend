@@ -1,5 +1,5 @@
 
-from utilities.exceptions import CVESTExternalError
+from utilities.exceptions import ExternalError
 
 from .constants import KNOWN_ASSETS, ERC20_TOKENS
 
@@ -35,4 +35,4 @@ class Asset:
             return ERC20_TOKENS[symbol]["name"]
         data = {"Symbol": symbol}
         msg = "Symbol not in KNOWN_ASSETS or ERC20_TOKENS"
-        raise CVESTExternalError(msg, data)
+        raise ExternalError(msg, data)

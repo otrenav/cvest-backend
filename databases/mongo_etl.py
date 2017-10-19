@@ -1,112 +1,63 @@
 
-from datetime import datetime, timedelta
+from utilities import TextProcessor
 
 
 class MongoETL:
 
-    def assets_time_series(self, assets, markets, symbols, timestamps):
+    searcher = None
+    tp = TextProcessor
+
+    def assets_time_series(self, searcher):
+        self.searcher = searcher
+        return self._time_series()
+
+    def _time_series(self):
         return [
-            self._observation(
-                timestamp,
-                self._values_at_timestamp(timestamp, assets, markets)
-            )
-            for timestamp in timestamps
+            {
+                'timestamp': timestamp,
+                'assets': [
+                    self._build_asset(asset, timestamp)
+                    for asset in self.searcher.get_assets()
+                    if asset['timestamp'] == timestamp
+                ]
+            }
+            for timestamp in self.searcher.get_timestamps()
         ]
 
-    def assets_current_status(self, time_series):
-        # Is in ascending order
-        last = time_series[-1]
+    def _build_asset(self, asset, timestamp):
+        market = self.searcher.find_market(asset, timestamp)
         return {
-            'timestamp': last['timestamp'],
-            'btc': last['btc'],
-            'usd': last['usd'],
-            'btc_1h': self._percent_change(last, time_series, '1h', 'btc'),
-            'btc_1d': self._percent_change(last, time_series, '1d', 'btc'),
-            'btc_1w': self._percent_change(last, time_series, '1w', 'btc'),
-            'btc_1m': self._percent_change(last, time_series, '1m', 'btc'),
-            'btc_1y': self._percent_change(last, time_series, '1y', 'btc'),
-            'usd_1h': self._percent_change(last, time_series, '1h', 'usd'),
-            'usd_1d': self._percent_change(last, time_series, '1d', 'usd'),
-            'usd_1w': self._percent_change(last, time_series, '1w', 'usd'),
-            'usd_1m': self._percent_change(last, time_series, '1m', 'usd'),
-            'usd_1y': self._percent_change(last, time_series, '1y', 'usd')
+            # 'id': str(asset['_id']),
+            'name': asset['name'],
+            'symbol': asset['symbol'],
+            'location': asset['location'],
+            'total': asset['total'],
+            'available': asset['available'],
+            'btc': self._total_value(asset, market, 'btc'),
+            'btc_1h': self._percent_change(asset, market, '1h', 'btc'),
+            'btc_1d': self._percent_change(asset, market, '1d', 'btc'),
+            'btc_1w': self._percent_change(asset, market, '1w', 'btc'),
+            'btc_1m': self._percent_change(asset, market, '1m', 'btc'),
+            'btc_1y': self._percent_change(asset, market, '1y', 'btc'),
+            'usd': self._total_value(asset, market, 'usd'),
+            'usd_1h': self._percent_change(asset, market, '1h', 'usd'),
+            'usd_1d': self._percent_change(asset, market, '1d', 'usd'),
+            'usd_1w': self._percent_change(asset, market, '1w', 'usd'),
+            'usd_1m': self._percent_change(asset, market, '1m', 'usd'),
+            'usd_1y': self._percent_change(asset, market, '1y', 'usd'),
+            'address': asset['address']
         }
-
-    def assets_balance(self):
-        return []
-
-    def _percent_change(self, last, time_series, interval, base):
-        timestamp = last['timestamp']
-        since = self._subtract_time(timestamp, interval)
-        time_series = [obs for obs in time_series if obs['timestamp'] >= since]
-        first = time_series[0]
-        return ((last[base] - first[base]) / first[base]) * 100
-
-    def _subtract_time(self, timestamp, interval):
-        date_time = datetime.strptime(timestamp, "%Y-%m-%d-%H-%M")
-        if interval == '1h':
-            date_time -= timedelta(hours=1)
-        elif interval == '1d':
-            date_time -= timedelta(days=1)
-        elif interval == '1w':
-            date_time -= timedelta(weeks=1)
-        elif interval == '1m':
-            date_time -= timedelta(weeks=4)
-        elif interval == '1y':
-            date_time -= timedelta(weeks=52)
-        return date_time.strftime("%Y-%m-%d-%H-%M")
-
-    def _values_at_timestamp(self, timestamp, assets, markets):
-        values = [
-            self._values_for_asset_at_timestamp(asset, timestamp, markets)
-            for asset in assets if asset['timestamp'] == timestamp
-        ]
-        return {
-            'btc': sum([v['btc'] for v in values]),
-            'usd': sum([v['usd'] for v in values])
-        }
-
-    def _values_for_asset_at_timestamp(self, asset, timestamp, markets):
-        for market in markets:
-            condition = (market['timestamp'] == timestamp and
-                         market['symbol'] == asset['symbol'])
-            if condition:
-                return {
-                    'btc': self._total_value(asset, market, 'btc'),
-                    'usd': self._total_value(asset, market, 'usd')
-                }
-        return {'btc': 0, 'usd': 0}
 
     def _total_value(self, asset, market, base):
         total = asset['total']
-        value = market['price_{}'.format(base)]
-        return self._floatify(total) * self._floatify(value)
+        price = market['price_{}'.format(base)]
+        if price is None:
+            return None
+        return self.tp.floatify(total) * self.tp.floatify(price)
 
-    def _floatify(self, string):
-        if string is not None:
-            return float(string)
-        return 0
-
-    def _observation(self, timestamp, values):
-        return {
-            'timestamp': timestamp,
-            'btc': values['btc'],
-            'usd': values['usd']
-        }
-
-    def _asset(self):
-        return {
-            'timestamp': None,
-            'name': None,
-            'symbol': None,
-            'total': None,
-            'available': None,
-            'btc': None,
-            'usd': None,
-            '1h': None,
-            '1d': None,
-            '1w': None,
-            '1m': None,
-            '1y': None,
-            'note': None
-        }
+    def _percent_change(self, asset, market_2, interval, base):
+        base = "price_{}".format(base)
+        market_1 = self.searcher.find_previous_market(asset, interval)
+        if market_1[base] is None:
+            return None
+        return ((market_2[base] - market_1[base]) / market_1[base]) * 100

@@ -1,5 +1,5 @@
 
-from utilities.exceptions import CVESTInternalError
+from utilities.exceptions import InternalError
 from assets import ERC20_TOKENS
 
 from .btc_wallet_requester import BTCWalletRequester
@@ -21,9 +21,9 @@ def factory(symbol, address):
         return NEOWalletRequester(address)
     elif symbol == "ARK":
         return ARKWalletRequester(address)
-    elif symbol == "IOTA":
+    elif symbol == "MIOTA":
         return IOTAWalletRequester(address)
     else:
         msg = "Unknown symbol"
         data = {"Symbol": symbol, "Address": address}
-        raise CVESTInternalError(msg, data)
+        raise InternalError(msg, data)

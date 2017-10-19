@@ -6,7 +6,7 @@ KNOWN_ASSETS = {
     "NEO": "Neo",
     "GAS": "Gas",
     "ARK": "Ark",
-    "IOTA": "IOTA"
+    "MIOTA": "IOTA"
 }
 
 ERC20_TOKENS = {

@@ -1,6 +1,6 @@
 
 from assets import Asset
-from utilities.exceptions import CVESTExternalError
+from utilities.exceptions import ExternalError
 
 from .wallet_requester import WalletRequester
 
@@ -18,7 +18,7 @@ class BTCWalletRequester(WalletRequester):
         except KeyError as error:
             msg = "BTC response could not be parsed"
             data = {"Original error": error, "Response": resp}
-            raise CVESTExternalError(msg, data)
+            raise ExternalError(msg, data)
         assets = []
         if total > 0:
             assets.append(Asset({

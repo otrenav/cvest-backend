@@ -1,5 +1,5 @@
 
-from utilities.exceptions import CVESTInternalError
+from utilities.exceptions import InternalError
 
 from .bittrex_processor import BittrexProcessor
 from .coinmarketcap_processor import CoinMarketCapProcessor
@@ -13,4 +13,4 @@ def factory(name):
     else:
         msg = "Unknown processor"
         data = {"Processor": name}
-        raise CVESTInternalError(msg, data)
+        raise InternalError(msg, data)

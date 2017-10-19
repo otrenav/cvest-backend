@@ -2,15 +2,12 @@
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-from utilities.exceptions import CVESTInternalError, CVESTExternalError
+from utilities.exceptions import InternalError, ExternalError
 
 from .database import Database
 from .mongo_etl import MongoETL
+from .mongo_searcher import MongoSearcher
 from .constants import USERS, PERSONAL, WALLETS, ACCOUNTS, ASSETS, EXCHANGES
-
-#
-# TODO: Extract separate conceptual classes
-#
 
 
 class MongoDatabase(Database):
@@ -25,7 +22,7 @@ class MongoDatabase(Database):
         if user is None:
             msg = "Non-existent user"
             data = {"Key": key, "Value": value}
-            raise CVESTInternalError(msg, data)
+            raise InternalError(msg, data)
         return user
 
     def read_user_assets_time_series(self, user_id):
@@ -39,16 +36,8 @@ class MongoDatabase(Database):
             'timestamp': {'$in': timestamps},
             'symbol': {'$in': symbols}
         }))
-        return self.etl.assets_time_series(
-            assets, markets, symbols, timestamps)
-
-    def read_user_assets_current_status(self, user_id):
-        time_series = self.read_user_assets_time_series(user_id)
-        return self.etl.assets_current_status(time_series)
-
-    def read_user_assets_balances(self, user_id):
-        time_series = self.read_user_assets_time_series(user_id)
-        return self.etl.assets_balance(time_series)
+        searcher = MongoSearcher(assets, markets, symbols, timestamps)
+        return self.etl.assets_time_series(searcher)
 
     def read_user_wallets(self, email, wallet_class):
         data = self._read_user_container(email, WALLETS)
@@ -66,7 +55,7 @@ class MongoDatabase(Database):
         if self.db[USERS][PERSONAL].find({"email": email}).count() > 0:
             data = {"Email": email}
             msg = "User already exists"
-            raise CVESTExternalError(msg, data)
+            raise ExternalError(msg, data)
         self.db[USERS][PERSONAL].insert_one({"email": email})
 
     def write_wallet(self, user_id, symbol, address, note):
@@ -77,7 +66,7 @@ class MongoDatabase(Database):
                 "Address": address
             }
             msg = "Wallet already exists"
-            raise CVESTExternalError(msg, data)
+            raise ExternalError(msg, data)
         self.db[USERS][WALLETS].insert_one({
             "address": address,
             "user_id": user_id,
@@ -94,7 +83,7 @@ class MongoDatabase(Database):
                 "Exchange": exchange,
                 "Key": key
             }
-            raise CVESTExternalError(msg, data)
+            raise ExternalError(msg, data)
         self.db[USERS][ACCOUNTS].insert_one({
             "exchange": self._slugify(exchange),
             "user_id": user_id,

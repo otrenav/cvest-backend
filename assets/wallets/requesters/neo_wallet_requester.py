@@ -1,6 +1,6 @@
 
 from assets import Asset
-from utilities.exceptions import CVESTExternalError
+from utilities.exceptions import ExternalError
 
 from .wallet_requester import WalletRequester
 
@@ -17,7 +17,7 @@ class NEOWalletRequester(WalletRequester):
         except KeyError as error:
             msg = "NEO response could not be parsed"
             data = {"Original error": error, "Response": resp}
-            raise CVESTExternalError(msg, data)
+            raise ExternalError(msg, data)
         assets = []
         if total > 0:
             assets.append(Asset({
@@ -31,7 +31,7 @@ class NEOWalletRequester(WalletRequester):
         except KeyError as error:
             msg = "GAS response could not be parsed"
             data = {"Original error": error, "Response": resp}
-            raise CVESTExternalError(msg, data)
+            raise ExternalError(msg, data)
         if total > 0:
             assets.append(Asset({
                 "name": "Gas",

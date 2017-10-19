@@ -2,7 +2,7 @@
 import datetime
 
 from assets import Asset
-from utilities.exceptions import CVESTExternalError
+from utilities.exceptions import ExternalError
 
 from .processor import Processor
 
@@ -48,7 +48,7 @@ class BittrexProcessor(Processor):
         else:
             data = {'Response': resp}
             msg = "Could not process Bittrex response"
-            raise CVESTExternalError(msg, data)
+            raise ExternalError(msg, data)
 
     def _asset(self, asset):
         return Asset({

@@ -4,7 +4,7 @@ import requests
 # from decimal import Decimal
 
 from assets import Asset, ERC20_TOKENS
-from utilities.exceptions import CVESTExternalError
+from utilities.exceptions import ExternalError
 
 from .wallet_requester import WalletRequester
 
@@ -36,7 +36,7 @@ class ETHWalletRequester(WalletRequester):
     #         # TODO: This is not a `KeyError`. What is it?
     #         msg = "ETH's JSON response could not be parsed"
     #         data = {"Original error": error, "URL": url}
-    #         raise CVESTExternalError(msg, data)
+    #         raise ExternalError(msg, data)
     #     return resp
 
     def _request(self):
@@ -57,7 +57,7 @@ class ETHWalletRequester(WalletRequester):
                 # TODO: This is not a `KeyError`. What is it?
                 msg = "ERC-20 TOKEN's JSON response could not be parsed"
                 data = {"Original error": error, "Token": symbol}
-                raise CVESTExternalError(msg, data)
+                raise ExternalError(msg, data)
             resps.append(resp)
         return resps
 
@@ -67,7 +67,7 @@ class ETHWalletRequester(WalletRequester):
         except KeyError as error:
             msg = "ETH response could not be parsed"
             data = {"Original error": error, "Response": resps[0]}
-            raise CVESTExternalError(msg, data)
+            raise ExternalError(msg, data)
         assets = []
         if total > 0:
             assets.append(Asset({
@@ -87,7 +87,7 @@ class ETHWalletRequester(WalletRequester):
                 # don't interrupt the program's flow by `raising` the error.
                 msg = "ERC-20 TOKEN response could not be parsed"
                 data = {"Original error": error, "Response": resp}
-                CVESTExternalError(msg, data)
+                ExternalError(msg, data)
             if total > 0:
                 assets.append(Asset({
                     "name": ERC20_TOKENS[resp["symbol"]]["name"],
@@ -109,7 +109,7 @@ class ETHWalletRequester(WalletRequester):
     #     except KeyError as error:
     #         msg = "ETH response could not be parsed"
     #         data = {"Original error": error, "Response": resp}
-    #         raise CVESTExternalError(msg, data)
+    #         raise ExternalError(msg, data)
     #     assets = [eth]
     #     for token in resp.get("tokens", []):
     #         try:
@@ -129,7 +129,7 @@ class ETHWalletRequester(WalletRequester):
     #             # don't interrupt the program's flow by `raising` the error.
     #             msg = "ERC-20 TOKEN response could not be parsed"
     #             data = {"Original error": error, "Response": resp}
-    #             CVESTExternalError(msg, data)
+    #             ExternalError(msg, data)
     #         assets += [token]
     #     return assets
 
