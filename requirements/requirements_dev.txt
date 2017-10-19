@@ -1,0 +1,5 @@
+
+pytest==3.2.3
+
+-r requirements_batch.txt
+-r requirements_api.txt
