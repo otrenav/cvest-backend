@@ -2,6 +2,7 @@
 import requests
 
 from assets import Asset
+from json.decoder import JSONDecodeError
 from utilities.exceptions import ExternalError
 
 from .wallet_requester import WalletRequester
@@ -36,8 +37,7 @@ class IOTAWalletRequester(WalletRequester):
                 '"addresses": [{address}]'.format(address=self.address) + '}')
         try:
             resp = requests.post(url=self.URL, data=data).json()
-        except KeyError as error:
-            # TODO: This is not a `KeyError`. What is it?
+        except JSONDecodeError as error:
             msg = "IOTA's JSON response could not be parsed"
             data = {"Original error": error, "URL": self.URL, "Data": data}
             raise ExternalError(msg, data)
