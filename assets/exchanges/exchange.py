@@ -1,11 +1,9 @@
 
-from abc import ABCMeta
-
 from .requesters.factory import factory as requester_factory
 from .processors.factory import factory as processor_factory
 
 
-class Exchange(metaclass=ABCMeta):
+class Exchange:
 
     def __init__(self, name='', key='', secret=''):
         self.name = name
